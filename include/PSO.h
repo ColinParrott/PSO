@@ -20,7 +20,7 @@ private:
     };
 
     struct Swarm {
-        double global_best_fitness;
+        double global_best_fitness = INT_MAX;
         std::vector<double> global_best_position;
         std::vector<Particle> particles;
     };

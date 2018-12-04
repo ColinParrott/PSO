@@ -28,28 +28,26 @@ vector<double> PSO::run() {
 void PSO::initSwarm() {
 
     swarm = Swarm();
+    swarm.global_best_position = vector<double> (DIMENSIONS);
     for (int i = 0; i < DIMENSIONS; i++) {
-        swarm.global_best_position.push_back(0.0);
-
         double range = BOUNDS[i][1] - BOUNDS[i][0];
         max_velocity.push_back(0.1 * range);
     }
 
     for (int i = 0; i < NUM_PARTICLES; i++) {
-        Particle p;
-        p.velocity = vector<double>(DIMENSIONS);
-        p.fitness = INT_MAX;
+        Particle p = Particle();
 
         for (int j = 0; j < DIMENSIONS; j++) {
             double min = BOUNDS[j][0];
             double max = BOUNDS[j][1];
             p.position.push_back(generateRandomDouble(min, max));
+            p.velocity.push_back(generateRandomDouble(-1.0, 1.0));
         }
 
         p.best_position = p.position;
         swarm.particles.push_back(p);
     }
-    
+
 }
 
 double PSO::generateRandomDouble(double min, double max) {
@@ -119,15 +117,14 @@ std::vector<double> PSO::getRandomNoise(double a, int length) {
 
 double PSO::calculateFitness(PSO::Particle &particle) {
     particle.fitness = benchmarkFunction(particle.position);
-
     if (particle.fitness < particle.best_fitness) {
         particle.best_position = particle.position;
         particle.best_fitness = particle.fitness;
     }
 
-    if (particle.best_fitness < swarm.global_best_fitness) {
-        swarm.global_best_fitness = particle.best_fitness;
-        swarm.global_best_position = particle.best_position;
+    if (particle.fitness < swarm.global_best_fitness) {
+        swarm.global_best_fitness = particle.fitness;
+        swarm.global_best_position = particle.position;
     }
 
 
